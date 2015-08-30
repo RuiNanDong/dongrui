@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        body, div, input, span {
+            margin: 0;
+            padding: 0;
+            font: 14px "微软雅黑";
+        }
+
+        #box {
+            margin: 50px auto 0;
+            padding: 20px;
+            width: 300px;
+            height: 200px;
+            border: 1px dashed #22b909;
+            border-radius: 10px;
+        }
+
+        #box #inEmail {
+            padding-left: 10px;
+            width: 260px;
+            height: 30px;
+            border: 1px solid #ddd;
+            color: #ccc;
+        }
+
+        #box #inEmail.cus {
+            color: #000;
+        }
+
+        #box #spEmail {
+            display: block;
+            margin-top: 5px;
+            padding-left: 10px;
+            height: 35px;
+            line-height: 35px;
+            border-radius: 5px;
+            background: #FFF38F;
+            color: #3c3c3c;
+        }
+
+        #box #spEmail.ok {
+            background: #96E555;
+            color: #0000BB;
+        }
+
+        #box #spEmail.error {
+            background: #FFE0E9;
+            color: red;
+        }
+
+        #box #btnEmail {
+            margin: 50px auto 0;
+            width: 200px;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+<!--表单验证
+    1、默认文本框中有提示文字，当文本框获取焦点(获取光标)后，把默认的提示文字隐藏，当鼠标离开文本框的时候，判断是否输入文字，没有输入的话把默认的提示文字显示
+    2、当鼠标离开的时候，我们判断是否符合我们的规则，不符合的话进行提示
+    3、如果只能输入数字，当我在输入内容的时候，非数字是不允许输入的
+    4、当我最终点击提交的时候，把每一个文本框中的内容从新的验证一遍
+-->
+<div id="box">
+    <input type="text" id="inEmail" value="请输入您的邮箱" tip="请输入您的邮箱"/>
+    <span id="spEmail">请输入您的邮箱</span>
+    <input type="button" value="立即提交" id="btnEmail"/>
+</div>
+<script type="text/javascript">
+    String.prototype.myTrim = function () {
+        return this.replace(/(^\s*|\s*$)/g, "");
+    }
+
+    //onfocus:文本框获取焦点事件
+    //onblur：文本框失去焦点事件
+    //onkeydown：键盘按下事件
+    //onkeyup：键盘抬起事件
+
+    var inEmail = document.getElementById("inEmail"), spEmail = document.getElementById("spEmail"), btnEmail = document.getElementById("btnEmail");
+
+    inEmail.onfocus = function () {
+        var val = this.value.myTrim();
+        if (val === this.getAttribute("tip")) {
+            this.value = null;
+            this.className = "cus";
+        }
+    }
+    inEmail.onblur = function () {
+        var val = this.value.myTrim();
+        val = (val === this.getAttribute("tip")) ? "" : val;
+        if (val === "") {
+            this.value = this.getAttribute("tip");
+            this.className = null;
+            spEmail.innerHTML = "输入的内容不能为空！";
+            spEmail.className = "error";
+            return false;
+        }
+        var reg = /^(?:[a-zA-Z0-9_-]+)@(?:[a-zA-Z0-9]+)(\.[a-zA-Z]{2,4}){1,2}$/;
+        if (!reg.test(val)) {
+            spEmail.innerHTML = "请输入正确的邮箱！";
+            spEmail.className = "error";
+            return false;
+        }
+        spEmail.innerHTML = "输入正确！";
+        spEmail.className = "ok";
+        return true;
+    }
+
+    btnEmail.onclick = function () {
+        var flag = inEmail.onblur();
+        if (flag) {
+            var val = inEmail.value.myTrim();
+            alert("您输入的邮箱是:" + val + "，我们已经提交到后台！");
+        }
+    }
+
+
+    //获取当前文本框中的内容，执行myTrim去除首尾的空格
+    //var val = this.value.myTrim();
+
+
+    //https://passport.baidu.com/v2/?reg 模仿百度的注册页面，实现表单验证
+
+</script>
+</body>
+</html>

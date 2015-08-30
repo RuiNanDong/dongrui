@@ -1,0 +1,40 @@
+body, table, tr, th, td, input {
+    margin: 0;
+    padding: 0;
+    font-family: "微软雅黑";
+    font-size: 14px;
+    -webkit-user-select: none;
+}
+
+#tab {
+    margin: 20px auto 0;
+    padding: 10px;
+    width: 350px;
+    border: 1px dashed #00b3ee;
+    border-radius: 5px;
+}
+
+#tab thead th, #tab tbody td {
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+#tab thead th {
+    background: #ffe470;
+}
+
+#tab thead th.cursor {
+    cursor: pointer;
+}
+
+#tab tbody tr.even {
+    background: #FFCCFF;
+}
+
+#tab tbody tr.hover {
+    background: #CDE074;
+}
+
+
+

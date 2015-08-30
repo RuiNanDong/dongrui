@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>多张图片延时加载</title>
+    <link type="text/css" rel="stylesheet" href="css/index.css"/>
+</head>
+<body>
+<div id="box"></div>
+<div id="goTp">点我回顶部</div>
+<script type="text/javascript" src="js/data.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript">
+    //第一步：动态创建div并添加到页面中；设置自定义属性trueImg用于存储真实图片；
+    var oBox = document.getElementById("box");
+    var frg = document.createDocumentFragment();
+    for (var i = 0; i < data.length; i++) {
+        var oDiv = document.createElement("div");
+        oDiv.trueImg = data[i];//data[i]是一个地址，给当前div添加自定义属性trueImg指向图片
+        frg.appendChild(oDiv);
+    }
+    oBox.appendChild(frg);
+    //判断图片延时加载
+    var oDivs = document.getElementsByTagName("div");
+    function loadImg() {
+        fn();
+        for (var i = 0; i < oDivs.length; i++) {
+            ~function (i) {
+                var cur = oDivs[i];
+                if (!cur.isLoad) {
+                    var cutT = utils.offset(cur).top + cur.offsetHeight;
+                    var navT = utils.getWin("clientHeight") + utils.getWin("scrollTop")
+                    if (navT > cutT) {
+                        var oImg = new Image;
+                        oImg.src = cur.trueImg;//让真实图片的地址给新建的图片对象
+                        oImg.onload = function () {//如果获取到图片，则把图片对象添加到当前div；
+                            cur.appendChild(this);
+                            cur.isLoad = true;
+                            move(this);//调用函数的时候把实参传给形参
+                        }
+                    }
+                }
+            }(i);
+        }
+    }
+    window.setTimeout(loadImg, 500);
+    window.onscroll = loadImg;
+    //第三步，实现图片逐渐显示，透明度由0-1；
+    function move(oImg) {//里面没有用内置设置接收机制，需要设置形参！
+        var count = 0;
+        var timer = window.setInterval(function () {
+            if (count >= 1) {
+                window.clearInterval(timer);
+                return;
+            }
+            count += 0.05;
+            oImg.style.opacity = count;
+        }, 10);
+    }
+    //第四步，设置回到顶部效果 先判断盒子是否显示（只有向上卷一屏的时候显示）
+    var goTp = document.getElementById("goTp");
+    var curH = utils.getWin("clientHeight");
+    function fn() {
+        var scrH = utils.getWin("scrollTop");//获得滚动条滚动的距离；
+        if (scrH > curH) {
+            goTp.style.display = "block";
+        }
+        else {
+            goTp.style.display = "none";
+        }
+    }
+    //第五步，设置点击事件，当点击的时候立即消失，并且以一定速度滑向顶部；
+    goTp.onclick = function () {
+        window.onscroll = null;
+        goTp.style.display = "none";
+        goTop();
+    };
+    var timer1 = null;
+    function goTop(){
+        window.clearTimeout(timer1);
+        if(document.body.scrollTop===0){
+            window.onscroll = loadImg;
+            return;//如果不加return；尽管绑定了滚动条事件，下面的代码还好执行；
+        }
+        document.body.scrollTop-=100;
+        var timer1 = window.setTimeout(goTop,10)
+    }
+</script>
+</body>
+</html>
